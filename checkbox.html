@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>JSPhere Element - MDL Components</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/fonts.css"/>
+        <link rel="stylesheet" href="/css/material.blue_grey-orange.min.css"/>
+        <script src="/lib/material.min.js" defer></script>
+        <script type="module">
+            import { render } from "./lib/element.min.js";
+            import "./mdlite/mdl-checkbox.js";
+
+            const { checkbox1, checkbox2, checkbox3, checkbox4 } = await render();
+            
+            checkbox2._onchange = () => {
+                console.log('checkbox2 clicked');
+                console.log('checkbox1 value', checkbox1._value);
+                checkbox1._click();
+                checkbox4._click();
+            }
+        </script>
+    </head>
+    <body style="height:100%; width:100%;">
+        <div>
+            <div data-is="Checkbox" data-id="checkbox1" data-is-label="Checkbox1" data-is-value="10" onchange="console.log('checkbox1 clicked')"></div>
+        </div>
+        <div>
+            <div data-is="Checkbox" data-id="checkbox2" data-is-label="Checkbox2" data-is-checked></div>
+        </div>
+        <div>
+            <div data-is="Checkbox" data-id="checkbox3" data-is-label="Checkbox3" data-is-value="40" onchange="console.log('checkbox3 clicked')"></div>
+        </div>
+        <div>
+            <div data-is="Checkbox" data-id="checkbox4" data-is-label="Checkbox4" onchange="console.log('checkbox4 clicked')" data-is-disabled></div>
+        </div>
+        <div>
+            <div data-is="Checkbox" data-id="checkbox5" data-is-theme="icon" data-is-label="today" onchange="console.log('checkbox5 clicked')"></div>
+        </div>
+        <div>
+            <div data-is="Checkbox" data-id="checkbox6" data-is-theme="switch" data-is-label="Checkbox6" onchange="console.log('checkbox6 clicked')"></div>
+        </div>
+        <div>
+            <div data-is="Checkbox" data-id="checkbox6" data-is-theme="switch" data-is-label="Checkbox6" onchange="console.log('checkbox6 clicked')" data-is-disabled></div>
+        </div>
+    </body>
+</html>
