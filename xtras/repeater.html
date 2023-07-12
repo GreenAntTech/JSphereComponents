@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>JSPhere Element - MDL Components</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/fonts.css"/>
+        <link rel="stylesheet" href="/css/material.blue_grey-orange.min.css"/>
+        <script src="/lib/material.min.js" defer></script>
+        <script type="module">
+            import { render } from "./lib/element.min.js";
+            import "./mdlite/mdl-text.js";
+
+            const list = ['Yohan', 'Rene'];
+
+            const { names } = await render();
+            
+            for (let i = 0; i < list.length; i++) {
+                const { name } = names._add(i);
+                name._render({ value: list[i] });
+            }
+            
+        </script>
+    </head>
+    <body style="height:100%; width:100%;">
+        <div is="template"></div>
+        <div>
+            <div data-is="Repeater" data-id="names">
+                <template>
+                    <div><div data-is="Text" data-id="name"></div></div>
+                </template>
+            </div>
+        </div>
+    </body>
+</html>

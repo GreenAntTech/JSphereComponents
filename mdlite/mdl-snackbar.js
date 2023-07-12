@@ -20,16 +20,6 @@ registerComponent('Snackbar', (element) => {
             element._theme = props.theme || 'snackbar';
             if (globalThis.componentHandler) globalThis.componentHandler.upgradeElement(element);
         },
-        hidden: {
-            set: (value) => {
-                if (typeof value != 'boolean')
-                    return;
-                element.style.display = (value) ? 'none' : 'inline-block';
-            },
-            get: () => {
-                return element.style.display === 'none';
-            }
-        },
         show: (props) => {
             element._hidden = false;
             element.MaterialSnackbar.showSnackbar(props);

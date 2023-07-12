@@ -15,16 +15,6 @@ registerComponent('Text', (element) => {
             const { container } = element._components;
             container.click();
         },
-        hidden: {
-            set: (value) => {
-                if (typeof value != 'boolean')
-                    return;
-                element.style.display = (value) ? 'none' : 'inline-block';
-            },
-            get: () => {
-                return element.style.display === 'none';
-            }
-        },
         onclick: {
             set: (value) => {
                 if (typeof value != 'function') return;

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>JSPhere - MDL Button</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/fonts.css"/>
+        <link rel="stylesheet" href="/css/material.blue_grey-orange.min.css"/>
+        <script src="/lib/material.min.js" defer></script>
+        <script type="module">
+            import { render } from "./lib/element.min.js";
+            import "./mdlite/mdl-button.js";
+
+            const { button1, button2, button3, button4, button5 } = await render();
+            button5._onclick = () => {
+                console.log('button5 clicked');
+            }
+        </script>
+    </head>
+    <body style="height:100%; width:100%;">
+        <div data-is="Button" data-id="button1" data-x-label="button" onclick="console.log('button1 clicked')"></div>
+        <div data-is="Button" data-id="button2" data-x-theme="primary" data-x-label="add" onclick="console.log('button2 clicked')" data-x-disabled></div>
+        <div data-is="Button" data-id="button3" data-x-theme="secondary" data-x-label="remove" onclick="console.log('button3 clicked')"></div>
+        <div data-is="Button" data-id="button4" data-x-theme="fab.primary" data-x-icon="add" onclick="console.log('button4 clicked')"></div>
+        <div data-is="Button" data-id="button5" data-x-theme="fab.secondary" data-x-icon="remove" data-x-hidden></div>
+    </body>
+</html>

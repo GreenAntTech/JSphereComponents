@@ -61,16 +61,6 @@ registerComponent('Radio', (element) => {
                 radio.name = value;
             }
         },
-        hidden: {
-            set: (value) => {
-                if (typeof value != 'boolean')
-                    return;
-                element.style.display = (value) ? 'none' : 'inline-block';
-            },
-            get: () => {
-                return element.style.display === 'none';
-            }
-        },
         label: {
             set: (value) => {
                 if (value === undefined)

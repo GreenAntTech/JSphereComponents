@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>JSPhere - MDL Button</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/fonts.css"/>
+        <link rel="stylesheet" href="/css/material.blue_grey-orange.min.css"/>
+        <script src="/lib/material.min.js" defer></script>
+        <script type="module">
+            import { render } from "./lib/element.min.js";
+            import "./mdlite/mdl-button.js";
+            import "./mdlite/mdl-textbox.js";
+
+            const { policyNo, confirmationNo, btnNext} = await render();
+            
+            policyNo._label = 'Policy No.';
+            policyNo._value = 'P123456789'
+
+            confirmationNo._label = 'Confirmation Number';
+
+            btnNext._label = 'next';
+            btnNext._onclick = () => {
+                window.location.href = '/summary.html';
+            }
+
+        </script>
+    </head>
+    <body style="height:100%; width:100%;">
+        <div style="height:50px; width:100%; background-color: darkolivegreen;">
+        </div>
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--4-col">
+                <div data-is="Textbox" data-id="policyNo" style="width: 100%;" data-x-readonly></div>
+            </div>
+        </div>
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--4-col">
+                <div data-is="Textbox" data-id="confirmationNo" style="width: 100%;"></div>
+            </div>
+        </div>
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--4-col">
+                <button data-is="Button" data-id="btnNext" data-x-theme="primary" style="float:right"></button>
+            </div>
+        </div>
+    </body>
+</html>

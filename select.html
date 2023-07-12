@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>JSPhere - MDL Button</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/fonts.css"/>
+        <link rel="stylesheet" href="/css/material.blue_grey-orange.min.css"/>
+        <link rel="stylesheet" href="/css/mdlite.css"/>
+        <script src="/lib/material.min.js" defer></script>
+        <script type="module">
+            import { render } from "./lib/element.min.js";
+            import "./mdlite/mdl-select.js";
+
+            const colours = [
+                { text: 'Red', value: 'red' },
+                { text: 'Blue', value: 'blue' },
+                { text: 'Green', value: 'green' },
+            ]
+
+            const { select1, select2 } = await render();
+            select1._options = colours;
+            select1._value = 'blue';
+            select1._onchange = () => {
+                console.log(select1._value);;
+            }
+
+            select2._options = colours;
+            select2._value = 'green';
+            select2._readonly = true;
+            select2._message = 'Hey there.'
+            select2._onchange = () => {
+                console.log(select2._value);;
+            }
+
+        </script>
+    </head>
+    <body style="height:100%; width:100%;">
+        <div data-is="Select" data-id="select1" data-x-label="Colours"></div>
+        <div data-is="Select" data-id="select2" data-x-label="Colours" data-x-theme="select.arrow"></div>
+    </body>
+</html>

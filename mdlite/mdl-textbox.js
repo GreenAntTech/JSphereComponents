@@ -55,16 +55,6 @@ registerComponent('Textbox', (element) => {
             const { input } = element._components;
             input.focus();
         },
-        hidden: {
-            set: (value) => {
-                if (typeof value != 'boolean')
-                    return;
-                element.style.display = (value) ? 'none' : 'inline-block';
-            },
-            get: () => {
-                return element.style.display === 'none';
-            }
-        },
         invalid: {
             set: (value) => {
                 if (typeof value != 'boolean') return;
@@ -88,10 +78,12 @@ registerComponent('Textbox', (element) => {
             set: (value) => {
                 if (typeof value != 'string') return;
                 const { message } = element._components;
-                if (value === '')
-                    message.style.visibility = 'hidden';
-                else
-                    message.style.visibility = 'visible';
+                if (value === '') {
+                    message.classList.remove('js-vis-visible');
+                }
+                else {
+                    message.classList.add('js-vis-visible');
+                }
                 message.innerHTML = value;
             },
             get: () => {

@@ -1,0 +1,15 @@
+.js-dsp-none {
+    display: none
+}
+
+.js-dsp-inblck {
+    display: inline-block
+}
+
+.js-vis-hidden {
+    visibility: hidden
+}
+
+.js-vis-visible {
+    visibility: visible;
+}

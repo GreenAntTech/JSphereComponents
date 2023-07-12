@@ -59,16 +59,6 @@ registerComponent('Button', (element) => {
                 return element.hasAttribute('disabled');
             }
         },
-        hidden: {
-            set: (value) => {
-                if (typeof value != 'boolean')
-                    return;
-                element.style.display = (value) ? 'none' : 'inline-block';
-            },
-            get: () => {
-                return element.style.display === 'none';
-            }
-        },
         icon: {
             set: (value) => {
                 if (typeof value != 'string')
