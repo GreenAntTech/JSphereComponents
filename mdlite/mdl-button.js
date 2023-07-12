@@ -104,6 +104,8 @@ registerComponent('Button', (element) => {
                     return;
                 const theme = THEMES[value];
                 element.className = theme.element;
+                if (globalThis.componentHandler)
+                    globalThis.componentHandler.upgradeElement(container);
             }
         }
     });

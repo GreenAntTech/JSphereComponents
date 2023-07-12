@@ -108,16 +108,16 @@ registerComponent('Select', (element, ctx) => {
         render: (props) => {
             element._useTemplate(TEMPLATE);
             element._hidden = props.hidden || false;
-            element._theme = props.theme || 'select';
-            element._label = props.label || '';
+            element._disabled = props.disabled || false;
+            element._readonly = props.readonly || false;
             element._map = props.map || { value: 'value', text: 'text' };
             element._options = props.options || [];
+            element._label = props.label || '';
+            element._value = props.value || '';
             element._invalid = props.invalid || false;
             element._message = props.message || '';
             element._onchange = props.onchange || (() => {});
-            element._disabled = props.disabled || false;
-            element._readonly = props.readonly || false;
-            element._value = props.value || '';
+            element._theme = props.theme || 'select';
         },
         disabled: {
             set: (value) => {
@@ -223,11 +223,17 @@ registerComponent('Select', (element, ctx) => {
         readonly: {
             set: (value) => {
                 if (typeof value != 'boolean') return;
-                const { input } = element._components;
-                if (value)
+                const { container, input } = element._components;
+                if (value) {
+                    element.getAttribute('data-x-theme', element._theme);
+                    element._theme = 'select';
                     input.setAttribute('readonly', '');
-                else
+                    if (element._value) container.classList.add('is-dirty');
+                }
+                else {
+                    element._theme = element.getAttribute('data-x-theme');
                     input.removeAttribute('readonly');
+                }
             },
             get: () => {
                 const { input } = element._components;
@@ -246,6 +252,8 @@ registerComponent('Select', (element, ctx) => {
                 message.className = theme.span;
                 list.className = theme.ul;
                 getmdlSelect.init('.getmdl-select', element);
+                if (globalThis.componentHandler)
+                    globalThis.componentHandler.upgradeElement(container);
             }
         },
         text: {
@@ -354,7 +362,11 @@ const getmdlSelect = {
         //hide all old opened selects and opening just clicked select
         input.onclick = function (e) {
             e.stopPropagation();
-            if (input.hasAttribute('disabled') || input.hasAttribute('readonly')) return;
+            if (input.hasAttribute('disabled') || input.hasAttribute('readonly')) {
+                hideAllMenus();
+                dropdown.classList.add('is-focused');
+                return;
+            }
             if (!menu.classList.contains('is-visible')) {
                 menu['MaterialMenu'].show();
                 hideAllMenus();
