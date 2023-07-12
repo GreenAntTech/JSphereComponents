@@ -2,17 +2,28 @@ import { registerComponent } from "../lib/element.min.js";
 
 registerComponent('Text', (element) => {
     
+    let _captions = (value) => { return value };
     let _onclick = null;
     
     element._extend({
         render: (props) => {
-            element._onclick = props.onclick ? props.onclick : () => { };
+            element._hidden = props.hidden || false;
+            element._onclick = props.onclick || (() => {});
             if (props.value) element._value = props.value;
-            element._visible = (typeof props.visible === 'boolean') ? props.visible : true;
         },
         click: () => {
             const { container } = element._components;
             container.click();
+        },
+        hidden: {
+            set: (value) => {
+                if (typeof value != 'boolean')
+                    return;
+                element.style.display = (value) ? 'none' : 'inline-block';
+            },
+            get: () => {
+                return element.style.display === 'none';
+            }
         },
         onclick: {
             set: (value) => {
@@ -28,19 +39,10 @@ registerComponent('Text', (element) => {
         value: {
             set: (value) => {
                 if (typeof value != 'string') return;
-                element.innerHTML = value;
+                element.innerHTML = _captions(value);
             },
             get: () => {
                 return element.innerHTML;
-            }
-        },
-        visible: {
-            set: (value) => {
-                if (typeof value != 'boolean') return;
-                element.style.display = (value) ? 'inline-block' : 'none';
-            },
-            get: () => {
-                return element.style.display !== 'none';
             }
         }
     });

@@ -9,7 +9,7 @@ registerComponent('Radio', (element) => {
         </label>
     `;
     
-    const STYLES = {
+    const THEMES = {
         'radio': {
             element: 'mdl-radio mdl-js-radio',
             input: 'mdl-radio__button',
@@ -17,18 +17,26 @@ registerComponent('Radio', (element) => {
         }
     };
     
+    let _captions = (value) => { return value };
     let _onclick = null;
     
     element._extend({
         render: (props) => {
-            element._setTemplate(TEMPLATE);
-            element._style = props.style || 'radio';
-            element._onclick = props.onclick ? props.onclick : () => { };
-            element._disabled = (typeof props.disabled === 'boolean') ? props.disabled : false;
-            element._group = props.group || '';
-            element._label = props.label || '';
-            element._value = props.value || '';
-            element._visible = (typeof props.visible === 'boolean') ? props.visible : true;
+            element._useTemplate(TEMPLATE);
+            element._hidden = props.hidden || false;
+            element._disabled = props.disabled || false;
+            element._group = props.group;
+            element._label = props.label;
+            element._onclick = props.onclick || (() => {});
+            element._value = props.value;
+            element._theme = props.theme || 'radio';
+        },
+        captions: {
+            set: (value) => {
+                if (typeof value !== 'function')
+                    return;
+                _captions = value;
+            }
         },
         click: () => {
             const { radio } = element._components;
@@ -36,7 +44,8 @@ registerComponent('Radio', (element) => {
         },
         disabled: {
             set: (value) => {
-                if (typeof value != 'boolean') return;
+                if (typeof value != 'boolean')
+                    return;
                 const { radio } = element._components;
                 radio.disabled = value;
             },
@@ -45,26 +54,29 @@ registerComponent('Radio', (element) => {
                 return radio.disabled;
             }
         },
-        label: {
-            set: (value) => {
-                if (typeof value != 'string') return;
-                const { label } = element._components;
-                label.innerHTML = value;
-            },
-            get: () => {
-                const { label } = element._components;
-                return label.innerHTML;
-            }
-        },
         group: {
             set: (value) => {
                 if (typeof value != 'string') return;
                 const { radio } = element._components;
                 radio.name = value;
+            }
+        },
+        hidden: {
+            set: (value) => {
+                if (typeof value != 'boolean')
+                    return;
+                element.style.display = (value) ? 'none' : 'inline-block';
             },
             get: () => {
-                const { radio } = element._components;
-                return radio.name;
+                return element.style.display === 'none';
+            }
+        },
+        label: {
+            set: (value) => {
+                if (value === undefined)
+                    return;
+                const { label } = element._components;
+                label.innerHTML = _captions(value);
             }
         },
         onclick: {
@@ -73,26 +85,24 @@ registerComponent('Radio', (element) => {
                 const { radio } = element._components;
                 radio.removeEventListener('click', _onclick);
                 _onclick = () => {
-                    element.parentElement.setAttribute('data-selected-value', radio.value);
-                    value();
+                    if (element.parentElement.getAttribute('data-is') === 'RadioGroup')
+                        element.parentElement._onclick_(radio.value);
+                    else
+                        value();
                 };
                 radio.addEventListener("click", _onclick);
             }
         },
-        style: {
+        theme: {
             set: (value) => {
                 if (typeof value != 'string') return;
-                if (element.getAttribute('data-style') === value) return;
-                element.setAttribute('data-style', value);
                 const { container, label, radio } = element._components;
-                const style = STYLES[value];
-                container.className = style.element;
-                radio.className = style.input;
-                label.className = style.span;
-                if (globalThis.componentHandler) globalThis.componentHandler.upgradeElement(element);
-            },
-            get: () => {
-                return element.getAttribute('data-style');
+                const theme = THEMES[value];
+                container.className = theme.element;
+                radio.className = theme.input;
+                label.className = theme.span;
+                if (globalThis.componentHandler)
+                    globalThis.componentHandler.upgradeElement(element);
             }
         },
         value: {
@@ -104,15 +114,6 @@ registerComponent('Radio', (element) => {
             get: () => {
                 const { radio } = element._components;
                 return radio.value;
-            }
-        },
-        visible: {
-            set: (value) => {
-                if (typeof value != 'boolean') return;
-                element.style.display = (value) ? 'inline-block' : 'none';
-            },
-            get: () => {
-                return element.style.display !== 'none';
             }
         }
     });

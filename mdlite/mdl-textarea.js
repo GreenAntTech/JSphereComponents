@@ -8,7 +8,7 @@ registerComponent('Textarea', (element) => {
         <span data-id="message" class="mdl-textfield__error"></span>
     `;
     
-    const STYLES = {
+    const THEMES = {
         'textarea': {
             element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label',
             input: 'mdl-textfield__input',
@@ -17,32 +17,33 @@ registerComponent('Textarea', (element) => {
         }
     };
     
+    let _captions = (value) => { return value };
     let _onchange = () => { };
     
     element._extend({
         render: (props) => {
-            element._setTemplate(TEMPLATE);
-            element._style = props.style || 'textarea';
+            element._useTemplate(TEMPLATE);
+            element._hidden = props.hidden || false;
+            element._theme = props.theme || 'textarea';
             element._label = props.label || '';
             element._rows = props.rows || 3;
-            element._invalid = (typeof props.invalid === 'boolean') ? props.invalid : false;
+            element._invalid = props.invalid || false;
             element._message = props.message || '';
-            element._onchange = props.onchange ? props.onchange : () => { };
-            element._disabled = (typeof props.disabled === 'boolean') ? props.disabled : false;
-            element._readonly = (typeof props.readonly === 'boolean') ? props.readonly : false;
+            element._onchange = props.onchange || (() => {});
+            element._disabled = props.disabled || false;
+            element._readonly = props.readonly || false;
             element._value = props.value || '';
-            element._visible = (typeof props.visible === 'boolean') ? props.visible : true;
         },
         disabled: {
             set: (value) => {
                 if (typeof value != 'boolean') return;
                 const { input } = element._components;
-                if (value === true) {
+                if (value) {
                     element.classList.add('is-disabled');
-                    input.setAttribute('disabled', 'true');
+                    input.setAttribute('disabled', '');
                     input.removeEventListener('keyup', _onchange);
                 }
-                else if (value === false) {
+                else {
                     element.classList.remove('is-disabled');
                     input.removeAttribute('disabled');
                     input.addEventListener('keyup', _onchange);
@@ -52,12 +53,22 @@ registerComponent('Textarea', (element) => {
             },
             get: () => {
                 const { input } = element._components;
-                return input.getAttribute('disabled') === 'true';
+                return input.hasAttribute('disabled');
             }
         },
         focus: () => {
             const { input } = element._components;
             input.focus();
+        },
+        hidden: {
+            set: (value) => {
+                if (typeof value != 'boolean')
+                    return;
+                element.style.display = (value) ? 'none' : 'inline-block';
+            },
+            get: () => {
+                return element.style.display === 'none';
+            }
         },
         invalid: {
             set: (value) => {
@@ -75,11 +86,7 @@ registerComponent('Textarea', (element) => {
             set: (value) => {
                 if (typeof value != 'string') return;
                 const { label } = element._components;
-                label.innerHTML = value;
-            },
-            get: () => {
-                const { label } = element._components;
-                return label.innerHTML;
+                label.innerHTML = _captions(value);
             }
         },
         message: {
@@ -91,10 +98,6 @@ registerComponent('Textarea', (element) => {
                 else
                     message.style.visibility = 'visible';
                 message.innerHTML = value;
-            },
-            get: () => {
-                const { message } = element._components;
-                return message.innerHTML;
             }
         },
         onchange: {
@@ -110,18 +113,18 @@ registerComponent('Textarea', (element) => {
             set: (value) => {
                 if (typeof value != 'boolean') return;
                 const { input } = element._components;
-                if (value === true) {
-                    input.setAttribute('readonly', 'true');
+                if (value) {
+                    input.setAttribute('readonly', '');
                     input.removeEventListener('keyup', _onchange);
                 }
-                else if (value === false) {
+                else {
                     input.removeAttribute('readonly');
                     input.addEventListener('keyup', _onchange);
                 }
             },
             get: () => {
                 const { input } = element._components;
-                return input.getAttribute('readonly') === 'true';
+                return input.hasAttribute('readonly');
             }
         },
         rows: {
@@ -129,27 +132,18 @@ registerComponent('Textarea', (element) => {
                 if (typeof value != 'number') return;
                 const { input } = element._components;
                 input.rows = value;
-            },
-            get: () => {
-                const { input } = element._components;
-                return input.rows;
             }
         },
-        style: {
+        theme: {
             set: (value) => {
                 if (typeof value != 'string') return;
-                if (element.getAttribute('data-style') === value) return;
-                element.setAttribute('data-style', value);
                 const { input, label, message } = element._components;
-                const style = STYLES[value];
-                element.className = style.element;
-                input.className = style.input;
-                label.className = style.label;
-                message.className = style.span;
+                const theme = THEMES[value];
+                element.className = theme.element;
+                input.className = theme.input;
+                label.className = theme.label;
+                message.className = theme.span;
                 if (globalThis.componentHandler) globalThis.componentHandler.upgradeElement(element);
-            },
-            get: () => {
-                return element.getAttribute('data-style');
             }
         },
         value: {
@@ -164,15 +158,6 @@ registerComponent('Textarea', (element) => {
             get: () => {
                 const { input } = element._components;
                 return input.value;
-            }
-        },
-        visible: {
-            set: (value) => {
-                if (typeof value != 'boolean') return;
-                element.style.display = (value) ? 'inline-block' : 'none';
-            },
-            get: () => {
-                return element.style.display !== 'none';
             }
         }
     });

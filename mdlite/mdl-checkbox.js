@@ -26,6 +26,8 @@ registerComponent('Checkbox', (element) => {
             span: 'mdl-switch__label'
         }
     };
+
+    let _captions = (value) => { return value };
     
     element._extend({
         render: (props) => {
@@ -34,13 +36,20 @@ registerComponent('Checkbox', (element) => {
                 element.onchange = null;
             }
             element._useTemplate(TEMPLATE);
-            element._checked = props.checked ? true : false;
-            element._disabled = props.disabled ? true : false;
-            element._hidden = props.hidden ? true : false;
+            element._hidden = props.hidden || false;
+            element._checked = props.checked || false;
+            element._disabled = props.disabled || false;
             element._label = props.label;
             element._onchange = props.onchange;
             element._value = props.value;
             element._theme = props.theme || 'checkbox';
+        },
+        captions: {
+            set: (value) => {
+                if (typeof value !== 'function')
+                    return;
+                _captions = value;
+            }
         },
         checked: {
             set: (value) => {
@@ -83,7 +92,7 @@ registerComponent('Checkbox', (element) => {
                 element.style.display = (value) ? 'none' : 'inline-block';
             },
             get: () => {
-                return element.style.display == 'none';
+                return element.style.display === 'none';
             }
         },
         label: {
@@ -91,11 +100,7 @@ registerComponent('Checkbox', (element) => {
                 if (value === undefined)
                     return;
                 const { label } = element._components;
-                label.innerHTML = value;
-            },
-            get: () => {
-                const { label } = element._components;
-                return label.innerHTML;
+                label.innerHTML = _captions(value);
             }
         },
         onchange: {
@@ -114,17 +119,13 @@ registerComponent('Checkbox', (element) => {
             set: (value) => {
                 if (value === undefined)
                     return;
-                element.setAttribute('data-theme', value);
                 const { container, checkbox, label } = element._components;
                 const theme = THEMES[value];
                 container.className = theme.element;
                 checkbox.className = theme.input;
                 label.className = theme.span;
                 if (globalThis.componentHandler)
-                    globalThis.componentHandler.upgradeElement(element);
-            },
-            get: () => {
-                return element.getAttribute('data-theme');
+                    globalThis.componentHandler.upgradeElement(container);
             }
         },
         value: {

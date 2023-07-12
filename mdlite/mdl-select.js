@@ -49,73 +49,114 @@ registerComponent('Select', (element, ctx) => {
             .getmdl-select__fix-height .mdl-menu.mdl-menu--top-left {
                 bottom:auto;top:0
             }
+
+            .getmdl-select__hidden {
+                display: none
+            }
         </style>
         <div data-id="container" style="width:100%" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
-            <input data-id="input" class="mdl-textfield__input" type="text">
+            <input data-id="input" class="mdl-textfield__input" type="text" readonly>
             <input data-id="hidden" type="hidden">
-            <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+            <i data-id="arrow">keyboard_arrow_down</i>
             <label data-id="label" class="mdl-textfield__label"></label>
             <span data-id="message" class="mdl-textfield__error"></span>
             <ul data-id="list" class="mdl-menu mdl-menu--bottom-left mdl-js-menu"></ul>
         </div>
     `;
     
-    const STYLES = {
+    const THEMES = {
         'select': {
             element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height',
             input: 'mdl-textfield__input',
+            arrow: 'mdl-icon-toggle__label material-icons getmdl-select__hidden',
+            label: 'mdl-textfield__label',
+            ul: 'mdl-menu mdl-menu--bottom-left mdl-js-menu',
+            span: 'mdl-textfield__error'
+        },
+        'select.arrow': {
+            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height',
+            input: 'mdl-textfield__input',
+            arrow: 'mdl-icon-toggle__label material-icons',
+            label: 'mdl-textfield__label',
+            ul: 'mdl-menu mdl-menu--bottom-left mdl-js-menu',
+            span: 'mdl-textfield__error'
+        },
+        'select.float': {
+            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height',
+            input: 'mdl-textfield__input',
+            arrow: 'mdl-icon-toggle__label material-icons getmdl-select__hidden',
+            label: 'mdl-textfield__label',
+            ul: 'mdl-menu mdl-menu--bottom-left mdl-js-menu',
+            span: 'mdl-textfield__error'
+        },
+        'select.float.arrow': {
+            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height',
+            input: 'mdl-textfield__input',
+            arrow: 'mdl-icon-toggle__label material-icons',
             label: 'mdl-textfield__label',
             ul: 'mdl-menu mdl-menu--bottom-left mdl-js-menu',
             span: 'mdl-textfield__error'
         }
     };
     
+    let _captions = (value) => { return value };
     let _map = { value: 'value', text: 'text' };
     let _options = [];
     let _onchange = null;
     
     element._extend({
         render: (props) => {
-            element._setTemplate(TEMPLATE);
-            element._style = props.style || 'select';
+            element._useTemplate(TEMPLATE);
+            element._hidden = props.hidden || false;
+            element._theme = props.theme || 'select';
             element._label = props.label || '';
             element._map = props.map || { value: 'value', text: 'text' };
             element._options = props.options || [];
-            element._invalid = (typeof props.invalid === 'boolean') ? props.invalid : false;
+            element._invalid = props.invalid || false;
             element._message = props.message || '';
-            element._onchange = props.onchange ? props.onchange : () => { };
-            element._disabled = (typeof props.disabled === 'boolean') ? props.disabled : false;
+            element._onchange = props.onchange || (() => {});
+            element._disabled = props.disabled || false;
+            element._readonly = props.readonly || false;
             element._value = props.value || '';
-            element._visible = (typeof props.visible === 'boolean') ? props.visible : true;
         },
         disabled: {
             set: (value) => {
                 if (typeof value != 'boolean') return;
                 const { input } = element._components;
-                if (value === true) {
-                    input.setAttribute('disabled', 'true');
-                }
-                else if (value === false) {
+                if (value)
+                    input.setAttribute('disabled', '');
+                else
                     input.removeAttribute('disabled');
-                }
             },
             get: () => {
                 const { input } = element._components;
-                return input.getAttribute('disabled') === 'true';
+                return input.hasAttribute('disabled');
             }
         },
         focus: () => {
             const { input } = element._components;
             input.focus();
         },
+        hidden: {
+            set: (value) => {
+                if (typeof value != 'boolean')
+                    return;
+                element.style.display = (value) ? 'none' : 'inline-block';
+            },
+            get: () => {
+                return element.style.display === 'none';
+            }
+        },
         invalid: {
             set: (value) => {
                 if (typeof value != 'boolean') return;
                 const { container } = element._components;
-                if (value === true)
+                if (value) {
                     container.classList.add('is-invalid');
-                else if (value === false)
+                }
+                else {
                     container.classList.remove('is-invalid');
+                }
             },
             get: () => {
                 const { container } = element._components;
@@ -124,22 +165,16 @@ registerComponent('Select', (element, ctx) => {
         },
         label: {
             set: (value) => {
-                if (typeof value != 'string') return;
+                if (value === undefined)
+                    return;
                 const { label } = element._components;
-                label.innerHTML = value;
-            },
-            get: () => {
-                const { label } = element._components;
-                return label.innerHTML;
+                label.innerHTML = _captions(value);
             }
         },
         map: {
             set: (value) => {
-                if (typeof value != 'object' || Array.isArray(a)) return;
+                if (typeof value != 'object' || Array.isArray(value)) return;
                 _map = value;
-            },
-            get: () => {
-                return _map;
             }
         },
         message: {
@@ -151,10 +186,6 @@ registerComponent('Select', (element, ctx) => {
                 else
                     message.style.visibility = 'visible';
                 message.innerHTML = value;
-            },
-            get: () => {
-                const { message } = element._components;
-                return message.innerHTML;
             }
         },
         onchange: {
@@ -183,31 +214,38 @@ registerComponent('Select', (element, ctx) => {
                     if (value === hidden.value)
                         listItem.setAttribute('data-selected', 'true');
                     listItem.setAttribute('data-val', value);
-                    listItem.innerHTML = (option[_map.text] !== undefined) ? option[_map.text] : option;
+                    listItem.innerHTML = _captions((option[_map.text] !== undefined) ? option[_map.text] : option);
                     list.appendChild(listItem);
                 }
                 getmdlSelect.init('.getmdl-select', element);
-            },
-            get: () => {
-                return _options;
             }
         },
-        style: {
+        readonly: {
             set: (value) => {
-                if (typeof value != 'string') return;
-                if (element.getAttribute('data-style') === value) return;
-                element.setAttribute('data-style', value);
-                const { container, input, label, list, message } = element._components;
-                const style = STYLES[value];
-                container.className = style.element;
-                input.className = style.input;
-                label.className = style.label;
-                message.className = style.span;
-                list.className = style.ul;
-                getmdlSelect.init('.getmdl-select', element);
+                if (typeof value != 'boolean') return;
+                const { input } = element._components;
+                if (value)
+                    input.setAttribute('readonly', '');
+                else
+                    input.removeAttribute('readonly');
             },
             get: () => {
-                return element.getAttribute('data-style');
+                const { input } = element._components;
+                return input.hasAttribute('readonly');
+            }
+        },
+        theme: {
+            set: (value) => {
+                if (typeof value != 'string') return;
+                const { arrow, container, input, label, list, message } = element._components;
+                const theme = THEMES[value];
+                container.className = theme.element;
+                input.className = theme.input;
+                arrow.className = theme.arrow;
+                label.className = theme.label;
+                message.className = theme.span;
+                list.className = theme.ul;
+                getmdlSelect.init('.getmdl-select', element);
             }
         },
         text: {
@@ -246,15 +284,6 @@ registerComponent('Select', (element, ctx) => {
                 if ((hidden.value === 'true') || (hidden.value === 'false'))
                     return hidden.value === 'true';
                 return value;
-            }
-        },
-        visible: {
-            set: (value) => {
-                if (typeof value != 'boolean') return;
-                element.style.display = (value) ? 'inline-block' : 'none';
-            },
-            get: () => {
-                return element.style.display !== 'none';
             }
         }
     });
@@ -314,6 +343,7 @@ const getmdlSelect = {
         };
         //show select if it has focus
         input.onfocus = function () {
+            if (input.hasAttribute('disabled') || input.hasAttribute('readonly')) return;
             menu['MaterialMenu'].show();
             menu.focus();
             opened = true;
@@ -324,6 +354,7 @@ const getmdlSelect = {
         //hide all old opened selects and opening just clicked select
         input.onclick = function (e) {
             e.stopPropagation();
+            if (input.hasAttribute('disabled') || input.hasAttribute('readonly')) return;
             if (!menu.classList.contains('is-visible')) {
                 menu['MaterialMenu'].show();
                 hideAllMenus();
@@ -365,6 +396,7 @@ const getmdlSelect = {
         if (arrow) {
             arrow.onclick = function (e) {
                 e.stopPropagation();
+                if (input.hasAttribute('disabled') || input.hasAttribute('readonly')) return;
                 if (opened) {
                     menu['MaterialMenu'].hide();
                     opened = false;

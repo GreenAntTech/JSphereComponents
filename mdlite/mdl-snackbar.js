@@ -7,7 +7,7 @@ registerComponent('Snackbar', (element) => {
         <button class="mdl-snackbar__action" type="button"></button>
     `;
     
-    const STYLES = {
+    const THEMES = {
         'snackbar': {
             element: 'mdl-js-snackbar mdl-snackbar',
         }
@@ -15,25 +15,30 @@ registerComponent('Snackbar', (element) => {
     
     element._extend({
         render: (props) => {
-            element.style.display = 'none';
-            element._setTemplate(TEMPLATE);
-            element._style = props.style || 'snackbar';
+            element._useTemplate(TEMPLATE);
+            element._hidden = true;
+            element._theme = props.theme || 'snackbar';
             if (globalThis.componentHandler) globalThis.componentHandler.upgradeElement(element);
         },
-        show: (props) => {
-            element.style.display = '';
-            element.MaterialSnackbar.showSnackbar(props);
-        },
-        style: {
+        hidden: {
             set: (value) => {
-                if (typeof value != 'string') return;
-                if (element.getAttribute('data-style') === value) return;
-                element.setAttribute('data-style', value);
-                const style = STYLES[value];
-                element.className = style.element;
+                if (typeof value != 'boolean')
+                    return;
+                element.style.display = (value) ? 'none' : 'inline-block';
             },
             get: () => {
-                return element.getAttribute('data-style');
+                return element.style.display === 'none';
+            }
+        },
+        show: (props) => {
+            element._hidden = false;
+            element.MaterialSnackbar.showSnackbar(props);
+        },
+        theme: {
+            set: (value) => {
+                if (typeof value != 'string') return;
+                const theme = THEMES[value];
+                element.className = theme.element;
             }
         }
     });

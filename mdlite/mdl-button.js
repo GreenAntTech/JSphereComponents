@@ -23,16 +23,25 @@ registerComponent('Button', (element) => {
             element: 'mdl-button mdl-js-button mdl-button--fab'
         }
     };
+
+    let _captions = (value) => { return value };
     
     element._extend({
         render: (props) => {
             element._useTemplate(TEMPLATE);
-            element._disabled = props.disabled ? true : false;
-            element._hidden = props.hidden ? true : false;
+            element._hidden = props.hidden || false;
+            element._disabled = props.disabled || false;
             element._icon = props.icon;
             element._label = props.label;
             element._onclick = props.onclick || element.onclick;
             element._theme = props.theme || 'button';
+        },
+        captions: {
+            set: (value) => {
+                if (typeof value !== 'function')
+                    return;
+                _captions = value;
+            }
         },
         click: () => {
             element.click();
@@ -41,12 +50,10 @@ registerComponent('Button', (element) => {
             set: (value) => {
                 if (typeof value != 'boolean')
                     return;
-                if (value) {
-                    element.setAttribute('disabled', null);
-                }
-                else {
+                if (value)
+                    element.setAttribute('disabled', '');
+                else
                     element.removeAttribute('disabled');
-                }
             },
             get: () => {
                 return element.hasAttribute('disabled');
@@ -59,7 +66,7 @@ registerComponent('Button', (element) => {
                 element.style.display = (value) ? 'none' : 'inline-block';
             },
             get: () => {
-                return element.style.display == 'none';
+                return element.style.display === 'none';
             }
         },
         icon: {
@@ -69,10 +76,6 @@ registerComponent('Button', (element) => {
                 const { label } = element._components;
                 label.classList.add('material-icons');
                 label.innerHTML = value;
-            },
-            get: () => {
-                const { label } = element._components;
-                return label.innerHTML;
             }
         },
         label: {
@@ -81,11 +84,7 @@ registerComponent('Button', (element) => {
                     return;
                 const { label } = element._components;
                 label.classList.remove('material-icons');
-                label.innerHTML = value;
-            },
-            get: () => {
-                const { label } = element._components;
-                return label.innerHTML;
+                label.innerHTML = _captions(value);
             }
         },
         onclick: {
@@ -103,14 +102,8 @@ registerComponent('Button', (element) => {
             set: (value) => {
                 if (typeof value != 'string')
                     return;
-                element.setAttribute('data-theme', value);
                 const theme = THEMES[value];
                 element.className = theme.element;
-                if (globalThis.componentHandler)
-                    globalThis.componentHandler.upgradeElement(element);
-            },
-            get: () => {
-                return element.getAttribute('data-theme');
             }
         }
     });
