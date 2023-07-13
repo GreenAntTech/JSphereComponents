@@ -21,8 +21,8 @@ registerComponent('Radio', (element) => {
     let _onclick = null;
     
     element._extend({
-        render: (props) => {
-            element._useTemplate(TEMPLATE);
+        render: async (props) => {
+            await element._useTemplate(TEMPLATE);
             element._hidden = props.hidden || false;
             element._disabled = props.disabled || false;
             element._group = props.group;

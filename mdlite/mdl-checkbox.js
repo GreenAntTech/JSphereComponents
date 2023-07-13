@@ -30,12 +30,12 @@ registerComponent('Checkbox', (element) => {
     let _captions = (value) => { return value };
     
     element._extend({
-        render: (props) => {
+        render: async (props) => {
             if (element.hasAttribute('onchange')) {
                 props.onchange = element.onchange;
                 element.onchange = null;
             }
-            element._useTemplate(TEMPLATE);
+            await element._useTemplate(TEMPLATE);
             element._hidden = props.hidden || false;
             element._checked = props.checked || false;
             element._disabled = props.disabled || false;

@@ -20,8 +20,8 @@ registerComponent('Textbox', (element) => {
     let _onchange = () => { };
 
     element._extend({
-        render: (props) => {
-            element._useTemplate(TEMPLATE);
+        render: async (props) => {
+            await element._useTemplate(TEMPLATE);
             element._hidden = props.hidden || false;
             element._theme = props.theme || 'textbox';
             element._type = props.type || '';

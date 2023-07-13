@@ -14,8 +14,8 @@ registerComponent('Snackbar', (element) => {
     };
     
     element._extend({
-        render: (props) => {
-            element._useTemplate(TEMPLATE);
+        render: async (props) => {
+            await element._useTemplate(TEMPLATE);
             element._hidden = true;
             element._theme = props.theme || 'snackbar';
             if (globalThis.componentHandler) globalThis.componentHandler.upgradeElement(element);

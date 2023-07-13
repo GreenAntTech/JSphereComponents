@@ -6,8 +6,8 @@ registerComponent('RadioGroup', (element, ctx) => {
     let _onchange = null;
 
     element._extend({
-        render: (props) => {
-            element._useTemplate(element.firstElementChild.innerHTML);
+        render: async (props) => {
+            await element._useTemplate(element.firstElementChild.innerHTML);
             element._hidden = props.hidden || false;
             element._onchange = props.onchange;
             element._renderRadioButtons();

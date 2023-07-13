@@ -21,8 +21,8 @@ registerComponent('Textarea', (element) => {
     let _onchange = () => { };
     
     element._extend({
-        render: (props) => {
-            element._useTemplate(TEMPLATE);
+        render: async (props) => {
+            await element._useTemplate(TEMPLATE);
             element._hidden = props.hidden || false;
             element._theme = props.theme || 'textarea';
             element._label = props.label || '';

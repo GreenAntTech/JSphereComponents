@@ -27,8 +27,8 @@ registerComponent('Button', (element) => {
     let _captions = (value) => { return value };
     
     element._extend({
-        render: (props) => {
-            element._useTemplate(TEMPLATE);
+        render: async (props) => {
+            await element._useTemplate(TEMPLATE);
             element._hidden = props.hidden || false;
             element._disabled = props.disabled || false;
             element._icon = props.icon;
@@ -95,7 +95,7 @@ registerComponent('Button', (element) => {
                 const theme = THEMES[value];
                 element.className = theme.element;
                 if (globalThis.componentHandler)
-                    globalThis.componentHandler.upgradeElement(container);
+                    globalThis.componentHandler.upgradeElement(element);
             }
         }
     });

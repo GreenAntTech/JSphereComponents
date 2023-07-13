@@ -105,8 +105,8 @@ registerComponent('Select', (element, ctx) => {
     let _onchange = null;
     
     element._extend({
-        render: (props) => {
-            element._useTemplate(TEMPLATE);
+        render: async (props) => {
+            await element._useTemplate(TEMPLATE);
             element._hidden = props.hidden || false;
             element._disabled = props.disabled || false;
             element._readonly = props.readonly || false;
