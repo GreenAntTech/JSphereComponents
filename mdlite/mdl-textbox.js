@@ -1,4 +1,4 @@
-import { registerComponent } from "../lib/element.min.js";
+import { registerComponent, scriptHost } from "../lib/element.min.js";
 
 registerComponent('Textbox', (element) => {
     
@@ -9,7 +9,7 @@ registerComponent('Textbox', (element) => {
     `;
     const THEMES = {
         'textbox': {
-            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label',
+            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty',
             input: 'mdl-textfield__input',
             label: 'mdl-textfield__label',
             span: 'mdl-textfield__error'
@@ -22,16 +22,17 @@ registerComponent('Textbox', (element) => {
     element._extend({
         render: async (props) => {
             await element._useTemplate(TEMPLATE);
-            element._hidden = props.hidden || false;
             element._theme = props.theme || 'textbox';
-            element._type = props.type || '';
-            element._label = props.label || '';
-            element._invalid = props.invalid || false;
-            element._message = props.message || '';
             element._onchange = props.onchange || (() => {});
-            element._disabled = props.disabled || false;
-            element._readonly = props.readonly || false;
-            element._value = props.value || '';
+            if (props.hidden) element._hidden = props.hidden;
+            if (props.type) element._type = props.type;
+            if (props.label) element._label = props.label;
+            if (props.placeholder) element._placeholder = props.placeholder;
+            if (props.invalid) element._invalid = props.invalid;
+            if (props.message) element._message = props.message;
+            if (props.disabled) element._disabled = props.disabled;
+            if (props.readonly) element._readonly = props.readonly;
+            if (props.value) element._value = props.value;
         },
         disabled: {
             set: (value) => {
@@ -100,6 +101,15 @@ registerComponent('Textbox', (element) => {
                 input.addEventListener("keyup", _onchange);
             }
         },
+        placeholder: {
+            set: (value) => {
+                if (typeof value != 'string') return;
+                const { input } = element._components;
+                if (input.value === value) return;
+                if (scriptHost.client) input.placeholder = value;
+                else input.setAttribute('placeholder', value);
+            }
+        },
         readonly: {
             set: (value) => {
                 if (typeof value != 'boolean') return;
@@ -151,7 +161,8 @@ registerComponent('Textbox', (element) => {
                 const { input } = element._components;
                 if (input.value === value) return;
                 element.classList.add('is-dirty');
-                input.value = value;
+                if (scriptHost.client) input.value = value;
+                else input.setAttribute('value', value);
                 if (typeof _onchange == 'function') _onchange();
             },
             get: () => {

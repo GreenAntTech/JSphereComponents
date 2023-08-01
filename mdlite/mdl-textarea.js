@@ -1,4 +1,4 @@
-import { registerComponent } from "../lib/element.min.js";
+import { registerComponent, scriptHost } from "../lib/element.min.js";
 
 registerComponent('Textarea', (element) => {
     
@@ -10,7 +10,7 @@ registerComponent('Textarea', (element) => {
     
     const THEMES = {
         'textarea': {
-            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label',
+            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty',
             input: 'mdl-textfield__input',
             label: 'mdl-textfield__label',
             span: 'mdl-textfield__error'
@@ -23,16 +23,18 @@ registerComponent('Textarea', (element) => {
     element._extend({
         render: async (props) => {
             await element._useTemplate(TEMPLATE);
-            element._hidden = props.hidden || false;
             element._theme = props.theme || 'textarea';
-            element._label = props.label || '';
-            element._rows = props.rows || 3;
-            element._invalid = props.invalid || false;
-            element._message = props.message || '';
             element._onchange = props.onchange || (() => {});
-            element._disabled = props.disabled || false;
-            element._readonly = props.readonly || false;
-            element._value = props.value || '';
+            if (props.hidden) element._hidden = props.hidden;
+            if (props.type) element._type = props.type;
+            if (props.rows) element._rows = props.rows;
+            if (props.label) element._label = props.label;
+            if (props.placeholder) element._placeholder = props.placeholder;
+            if (props.invalid) element._invalid = props.invalid;
+            if (props.message) element._message = props.message;
+            if (props.disabled) element._disabled = props.disabled;
+            if (props.readonly) element._readonly = props.readonly;
+            if (props.value) element._value = props.value;
         },
         disabled: {
             set: (value) => {
@@ -144,7 +146,8 @@ registerComponent('Textarea', (element) => {
                 const { input } = element._components;
                 if (input.value === value) return;
                 element.classList.add('is-dirty');
-                input.value = value;
+                if (scriptHost.client) input.value = value;
+                else input.innerText = value;
                 if (typeof _onchange == 'function') _onchange();
             },
             get: () => {

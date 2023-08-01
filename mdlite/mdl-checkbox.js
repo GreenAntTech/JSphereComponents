@@ -36,13 +36,13 @@ registerComponent('Checkbox', (element) => {
                 element.onchange = null;
             }
             await element._useTemplate(TEMPLATE);
+            element._theme = props.theme || 'checkbox';
             element._hidden = props.hidden || false;
             element._checked = props.checked || false;
             element._disabled = props.disabled || false;
             element._label = props.label;
             element._onchange = props.onchange;
             element._value = props.value;
-            element._theme = props.theme || 'checkbox';
         },
         captions: {
             set: (value) => {

@@ -29,12 +29,12 @@ registerComponent('Button', (element) => {
     element._extend({
         render: async (props) => {
             await element._useTemplate(TEMPLATE);
+            element._theme = props.theme || 'button';
             element._hidden = props.hidden || false;
             element._disabled = props.disabled || false;
             element._icon = props.icon;
             element._label = props.label;
             element._onclick = props.onclick || element.onclick;
-            element._theme = props.theme || 'button';
         },
         captions: {
             set: (value) => {

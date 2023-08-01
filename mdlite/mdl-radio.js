@@ -23,13 +23,13 @@ registerComponent('Radio', (element) => {
     element._extend({
         render: async (props) => {
             await element._useTemplate(TEMPLATE);
+            element._theme = props.theme || 'radio';
             element._hidden = props.hidden || false;
             element._disabled = props.disabled || false;
             element._group = props.group;
             element._label = props.label;
             element._onclick = props.onclick || (() => {});
             element._value = props.value;
-            element._theme = props.theme || 'radio';
         },
         captions: {
             set: (value) => {

@@ -1,72 +1,19 @@
-import { registerComponent } from "../lib/element.min.js";
+import { registerComponent, scriptHost } from "../lib/element.min.js";
 
 registerComponent('Select', (element, ctx) => {
     
     const TEMPLATE = `
-        <style>
-            .getmdl-select {
-                outline:none
-            }
-            
-            .getmdl-select .mdl-textfield__input {
-                cursor:pointer
-            }
-            
-            .getmdl-select .selected {
-                background-color:#ddd
-            }
-            
-            .getmdl-select .mdl-icon-toggle__label {
-                float:right;
-                margin-top:-30px;
-                color:rgba(0,0,0,0.4);
-                transform:rotate(0);
-                transition:transform 0.3s
-            }
-            
-            .getmdl-select.is-focused .mdl-icon-toggle__label {
-                color:#3f51b5;
-                transform:rotate(180deg)
-            }
-            
-            .getmdl-select .mdl-menu__container {
-                width:100% !important;
-                margin-top:2px
-            }
-            
-            .getmdl-select .mdl-menu__container .mdl-menu {
-                width:100%
-            }
-            
-            .getmdl-select .mdl-menu__container .mdl-menu .mdl-menu__item {
-                font-size:16px
-            }
-            
-            .getmdl-select__fix-height .mdl-menu__container .mdl-menu {
-                overflow-y:auto;max-height:288px !important
-            }
-            
-            .getmdl-select__fix-height .mdl-menu.mdl-menu--top-left {
-                bottom:auto;top:0
-            }
-
-            .getmdl-select__hidden {
-                display: none
-            }
-        </style>
-        <div data-id="container" style="width:100%" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
-            <input data-id="input" class="mdl-textfield__input" type="text" readonly>
-            <input data-id="hidden" type="hidden">
-            <i data-id="arrow">keyboard_arrow_down</i>
-            <label data-id="label" class="mdl-textfield__label"></label>
-            <span data-id="message" class="mdl-textfield__error"></span>
-            <ul data-id="list" class="mdl-menu mdl-menu--bottom-left mdl-js-menu"></ul>
-        </div>
+        <input data-id="input" class="mdl-textfield__input" type="text">
+        <input data-id="hidden" type="hidden">
+        <i data-id="arrow">keyboard_arrow_down</i>
+        <label data-id="label" class="mdl-textfield__label"></label>
+        <span data-id="message" class="mdl-textfield__error"></span>
+        <ul data-id="list" class="mdl-menu mdl-menu--bottom-left mdl-js-menu"></ul>
     `;
     
     const THEMES = {
         'select': {
-            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height',
+            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height is-dirty',
             input: 'mdl-textfield__input',
             arrow: 'mdl-icon-toggle__label material-icons getmdl-select__hidden',
             label: 'mdl-textfield__label',
@@ -74,7 +21,7 @@ registerComponent('Select', (element, ctx) => {
             span: 'mdl-textfield__error'
         },
         'select.arrow': {
-            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height',
+            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height is-dirty',
             input: 'mdl-textfield__input',
             arrow: 'mdl-icon-toggle__label material-icons',
             label: 'mdl-textfield__label',
@@ -82,7 +29,7 @@ registerComponent('Select', (element, ctx) => {
             span: 'mdl-textfield__error'
         },
         'select.float': {
-            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height',
+            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height is-dirty',
             input: 'mdl-textfield__input',
             arrow: 'mdl-icon-toggle__label material-icons getmdl-select__hidden',
             label: 'mdl-textfield__label',
@@ -90,7 +37,7 @@ registerComponent('Select', (element, ctx) => {
             span: 'mdl-textfield__error'
         },
         'select.float.arrow': {
-            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height',
+            element: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height is-dirty',
             input: 'mdl-textfield__input',
             arrow: 'mdl-icon-toggle__label material-icons',
             label: 'mdl-textfield__label',
@@ -107,17 +54,19 @@ registerComponent('Select', (element, ctx) => {
     element._extend({
         render: async (props) => {
             await element._useTemplate(TEMPLATE);
-            element._hidden = props.hidden || false;
-            element._disabled = props.disabled || false;
-            element._readonly = props.readonly || false;
+            element._theme = props.theme || 'select';
             element._map = props.map || { value: 'value', text: 'text' };
             element._options = props.options || [];
-            element._label = props.label || '';
-            element._value = props.value || '';
-            element._invalid = props.invalid || false;
-            element._message = props.message || '';
             element._onchange = props.onchange || (() => {});
-            element._theme = props.theme || 'select';
+            if (props.hidden) element._hidden = props.hidden;
+            if (props.type) element._type = props.type;
+            if (props.label) element._label = props.label;
+            if (props.placeholder) element._placeholder = props.placeholder;
+            if (props.invalid) element._invalid = props.invalid;
+            if (props.message) element._message = props.message;
+            if (props.disabled) element._disabled = props.disabled;
+            if (props.readonly) element._readonly = props.readonly;
+            if (props.value) element._value = props.value;
         },
         disabled: {
             set: (value) => {
@@ -142,15 +91,15 @@ registerComponent('Select', (element, ctx) => {
                 if (typeof value != 'boolean') return;
                 const { container } = element._components;
                 if (value) {
-                    container.classList.add('is-invalid');
+                    element.classList.add('is-invalid');
                 }
                 else {
-                    container.classList.remove('is-invalid');
+                    element.classList.remove('is-invalid');
                 }
             },
             get: () => {
                 const { container } = element._components;
-                return container.classList.contains('is-invalid');
+                return element.classList.contains('is-invalid');
             }
         },
         label: {
@@ -212,6 +161,15 @@ registerComponent('Select', (element, ctx) => {
                 getmdlSelect.init('.getmdl-select', element);
             }
         },
+        placeholder: {
+            set: (value) => {
+                if (typeof value != 'string') return;
+                const { input } = element._components;
+                if (input.value === value) return;
+                if (scriptHost.client) input.placeholder = value;
+                else input.setAttribute('placeholder', value);
+            }
+        },
         readonly: {
             set: (value) => {
                 if (typeof value != 'boolean') return;
@@ -220,7 +178,7 @@ registerComponent('Select', (element, ctx) => {
                     element.getAttribute('data-x-theme', element._theme);
                     element._theme = 'select';
                     input.setAttribute('readonly', '');
-                    if (element._value) container.classList.add('is-dirty');
+                    if (element._value) element.classList.add('is-dirty');
                 }
                 else {
                     element._theme = element.getAttribute('data-x-theme');
@@ -237,7 +195,7 @@ registerComponent('Select', (element, ctx) => {
                 if (typeof value != 'string') return;
                 const { arrow, container, input, label, list, message } = element._components;
                 const theme = THEMES[value];
-                container.className = theme.element;
+                element.className = theme.element;
                 input.className = theme.input;
                 arrow.className = theme.arrow;
                 label.className = theme.label;
@@ -245,7 +203,7 @@ registerComponent('Select', (element, ctx) => {
                 list.className = theme.ul;
                 getmdlSelect.init('.getmdl-select', element);
                 if (globalThis.componentHandler)
-                    globalThis.componentHandler.upgradeElement(container);
+                    globalThis.componentHandler.upgradeElement(element);
             }
         },
         text: {
@@ -264,9 +222,9 @@ registerComponent('Select', (element, ctx) => {
                         input.value = option[_map.text];
                         hidden.value = value;
                         if (hidden.value !== '')
-                            container.classList.add('is-dirty');
+                            element.classList.add('is-dirty');
                         else
-                            container.classList.remove('is-dirty');
+                            element.classList.remove('is-dirty');
                         if (typeof (_onchange) === 'function')
                             _onchange();
                         itemFound = true;
@@ -429,7 +387,7 @@ const getmdlSelect = {
             li.onclick = function () {
                 setSelectedItem(li);
             };
-            if (li.dataset.selected) {
+            if (li.hasAttribute('selected')) {
                 setSelectedItem(li);
             }
         });
