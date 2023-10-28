@@ -4,7 +4,7 @@ registerComponent('Radio', (element) => {
     
     const TEMPLATE = `
         <label data-id="container" class="mdl-radio mdl-js-radio">
-            <input data-id="radio" class="mdl-radio__input" type="radio">
+            <input data-id="radio" class="mdl-radio__input" style="visibility:hidden" type="radio" style="outline:none">
             <span data-id="label" class="mdl-radio__label"></span>
         </label>
     `;
@@ -92,7 +92,7 @@ registerComponent('Radio', (element) => {
                 radio.className = theme.input;
                 label.className = theme.span;
                 if (globalThis.componentHandler)
-                    globalThis.componentHandler.upgradeElement(element);
+                    globalThis.componentHandler.upgradeElement(container);
             }
         },
         value: {

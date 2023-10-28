@@ -3,7 +3,7 @@ import { registerComponent, scriptHost } from "../lib/element.min.js";
 registerComponent('Textarea', (element) => {
     
     const TEMPLATE = `
-        <textarea data-id="input" type="text" class="mdl-textfield__input"></textarea>
+        <textarea data-id="input" type="text" class="mdl-textfield__input" style="outline:none"></textarea>
         <label data-id="label" class="mdl-textfield__label"></label>
         <span data-id="message" class="mdl-textfield__error"></span>
     `;
@@ -17,7 +17,6 @@ registerComponent('Textarea', (element) => {
         }
     };
     
-    let _captions = (value) => { return value };
     let _onchange = () => { };
     
     element._extend({
@@ -25,16 +24,16 @@ registerComponent('Textarea', (element) => {
             await element._useTemplate(TEMPLATE);
             element._theme = props.theme || 'textarea';
             element._onchange = props.onchange || (() => {});
-            if (props.hidden) element._hidden = props.hidden;
-            if (props.type) element._type = props.type;
-            if (props.rows) element._rows = props.rows;
-            if (props.label) element._label = props.label;
-            if (props.placeholder) element._placeholder = props.placeholder;
-            if (props.invalid) element._invalid = props.invalid;
-            if (props.message) element._message = props.message;
-            if (props.disabled) element._disabled = props.disabled;
-            if (props.readonly) element._readonly = props.readonly;
-            if (props.value) element._value = props.value;
+            element._hidden = props.hidden || false;
+            // if (props.type) element._type = props.type;
+            element._rows = props.rows;
+            element._label = props.label;
+            element._placeholder = props.placeholder || '';
+            element._invalid = props.invalid || false;
+            element._message = props.message || '';
+            element._disabled = props.disabled || false;
+            element._readonly = props.readonly || false;
+            element._value = props.value || '';
         },
         disabled: {
             set: (value) => {
@@ -78,19 +77,13 @@ registerComponent('Textarea', (element) => {
             set: (value) => {
                 if (typeof value != 'string') return;
                 const { label } = element._components;
-                label.innerHTML = _captions(value);
+                label.innerHTML = value;
             }
         },
         message: {
             set: (value) => {
                 if (typeof value != 'string') return;
                 const { message } = element._components;
-                if (value === '') {
-                    message.classList.remove('js-vis-visible');
-                }
-                else {
-                    message.classList.add('js-vis-visible');
-                }
                 message.innerHTML = value;
             }
         },
@@ -133,7 +126,7 @@ registerComponent('Textarea', (element) => {
                 if (typeof value != 'string') return;
                 const { input, label, message } = element._components;
                 const theme = THEMES[value];
-                element.className = theme.element;
+                element.classList.add(...(theme.element.split(' ')));
                 input.className = theme.input;
                 label.className = theme.label;
                 message.className = theme.span;

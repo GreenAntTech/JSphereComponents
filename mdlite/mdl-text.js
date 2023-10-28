@@ -2,7 +2,6 @@ import { registerComponent } from "../lib/element.min.js";
 
 registerComponent('Text', (element) => {
     
-    let _captions = (value) => { return value };
     let _onclick = null;
     
     element._extend({
@@ -12,8 +11,7 @@ registerComponent('Text', (element) => {
             if (props.value) element._value = props.value;
         },
         click: () => {
-            const { container } = element._components;
-            container.click();
+            element.click();
         },
         onclick: {
             set: (value) => {
@@ -29,7 +27,7 @@ registerComponent('Text', (element) => {
         value: {
             set: (value) => {
                 if (typeof value != 'string') return;
-                element.innerHTML = _captions(value);
+                element.innerHTML = value;
             },
             get: () => {
                 return element.innerHTML;

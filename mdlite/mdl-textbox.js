@@ -3,7 +3,7 @@ import { registerComponent, scriptHost } from "../lib/element.min.js";
 registerComponent('Textbox', (element) => {
     
     const TEMPLATE = `
-        <input data-id="input" type="text" class="mdl-textfield__input">
+        <input data-id="input" type="text" class="mdl-textfield__input" style="outline:none">
         <label data-id="label" class="mdl-textfield__label"></label>
         <span data-id="message" class="mdl-textfield__error"></span>
     `;
@@ -24,15 +24,15 @@ registerComponent('Textbox', (element) => {
             await element._useTemplate(TEMPLATE);
             element._theme = props.theme || 'textbox';
             element._onchange = props.onchange || (() => {});
-            if (props.hidden) element._hidden = props.hidden;
-            if (props.type) element._type = props.type;
-            if (props.label) element._label = props.label;
-            if (props.placeholder) element._placeholder = props.placeholder;
-            if (props.invalid) element._invalid = props.invalid;
-            if (props.message) element._message = props.message;
-            if (props.disabled) element._disabled = props.disabled;
-            if (props.readonly) element._readonly = props.readonly;
-            if (props.value) element._value = props.value;
+            element._hidden = props.hidden || false;
+            element._type = props.type;
+            element._label = props.label;
+            element._placeholder = props.placeholder || '';
+            element._invalid = props.invalid || false;
+            element._message = props.message || '';
+            element._disabled = props.disabled || false;
+            element._readonly = props.readonly || false;
+            element._value = props.value || '';
         },
         disabled: {
             set: (value) => {
@@ -79,17 +79,7 @@ registerComponent('Textbox', (element) => {
             set: (value) => {
                 if (typeof value != 'string') return;
                 const { message } = element._components;
-                if (value === '') {
-                    message.classList.remove('js-vis-visible');
-                }
-                else {
-                    message.classList.add('js-vis-visible');
-                }
                 message.innerHTML = value;
-            },
-            get: () => {
-                const { message } = element._components;
-                return message.innerHTML;
             }
         },
         onchange: {
@@ -134,7 +124,7 @@ registerComponent('Textbox', (element) => {
                 element.setAttribute('data-x-theme', value);
                 const { input, label, message } = element._components;
                 const theme = THEMES[value];
-                element.className = theme.element;
+                element.classList.add(...(theme.element.split(' ')));
                 input.className = theme.input;
                 label.className = theme.label;
                 message.className = theme.span;

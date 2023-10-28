@@ -4,7 +4,7 @@ registerComponent('Checkbox', (element) => {
     
     const TEMPLATE = `
         <label data-id="container" class="mdl-checkbox mdl-js-checkbox">
-            <input data-id="checkbox" class="mdl-checkbox__input" type="checkbox">
+            <input data-id="checkbox" class="mdl-checkbox__input" type="checkbox" style="outline:none">
             <span data-id="label" class="mdl-checkbox__label"></span>
         </label>
     `;

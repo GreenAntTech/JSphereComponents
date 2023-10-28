@@ -1,7 +1,7 @@
-import { registerComponent, createComponent } from "../lib/element.min.js";
+import { registerComponent } from "../lib/element.min.js";
 import './mdl-radio.js';
 
-registerComponent('RadioGroup', (element, ctx) => {
+registerComponent('RadioGroup', (element, _ctx) => {
 
     let _onchange = null;
 
@@ -14,7 +14,7 @@ registerComponent('RadioGroup', (element, ctx) => {
             element._selected = props.selected;
         },
         renderRadioButtons: () => {
-            for (let id in element._components) {
+            for (const id in element._components) {
                 const radio = element._components[id];
                 radio._render({
                     group: element.getAttribute('data-id')
@@ -34,7 +34,7 @@ registerComponent('RadioGroup', (element, ctx) => {
                 if (typeof value != 'string')
                     return;
                 element.setAttribute('data-x-selected', value);
-                for (let id in element._components) {
+                for (const id in element._components) {
                     const radio = element._components[id];
                     if (radio._value === value)
                         radio._click();

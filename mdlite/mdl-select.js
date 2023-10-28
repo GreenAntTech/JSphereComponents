@@ -3,7 +3,7 @@ import { registerComponent, scriptHost } from "../lib/element.min.js";
 registerComponent('Select', (element, ctx) => {
     
     const TEMPLATE = `
-        <input data-id="input" class="mdl-textfield__input" type="text">
+        <input data-id="input" class="mdl-textfield__input" type="text" style="outline:none">
         <input data-id="hidden" type="hidden">
         <i data-id="arrow">keyboard_arrow_down</i>
         <label data-id="label" class="mdl-textfield__label"></label>
@@ -58,15 +58,15 @@ registerComponent('Select', (element, ctx) => {
             element._map = props.map || { value: 'value', text: 'text' };
             element._options = props.options || [];
             element._onchange = props.onchange || (() => {});
-            if (props.hidden) element._hidden = props.hidden;
-            if (props.type) element._type = props.type;
-            if (props.label) element._label = props.label;
-            if (props.placeholder) element._placeholder = props.placeholder;
-            if (props.invalid) element._invalid = props.invalid;
-            if (props.message) element._message = props.message;
-            if (props.disabled) element._disabled = props.disabled;
-            if (props.readonly) element._readonly = props.readonly;
-            if (props.value) element._value = props.value;
+            element._hidden = props.hidden || false;
+            // if (props.type) element._type = props.type;
+            element._label = props.label;
+            element._placeholder = props.placeholder || '';
+            element._invalid = props.invalid || false;
+            element._message = props.message || '';
+            element._disabled = props.disabled || false;
+            element._readonly = props.readonly || false;
+            element._value = props.value || '';
         },
         disabled: {
             set: (value) => {
@@ -89,7 +89,6 @@ registerComponent('Select', (element, ctx) => {
         invalid: {
             set: (value) => {
                 if (typeof value != 'boolean') return;
-                const { container } = element._components;
                 if (value) {
                     element.classList.add('is-invalid');
                 }
@@ -98,7 +97,6 @@ registerComponent('Select', (element, ctx) => {
                 }
             },
             get: () => {
-                const { container } = element._components;
                 return element.classList.contains('is-invalid');
             }
         },
@@ -120,12 +118,6 @@ registerComponent('Select', (element, ctx) => {
             set: (value) => {
                 if (typeof value != 'string') return;
                 const { message } = element._components;
-                if (value === '') {
-                    message.classList.remove('js-vis-visible');
-                }
-                else {
-                    message.classList.add('js-vis-visible');
-                }
                 message.innerHTML = value;
             }
         },
@@ -173,7 +165,7 @@ registerComponent('Select', (element, ctx) => {
         readonly: {
             set: (value) => {
                 if (typeof value != 'boolean') return;
-                const { container, input } = element._components;
+                const { input } = element._components;
                 if (value) {
                     element.getAttribute('data-x-theme', element._theme);
                     element._theme = 'select';
@@ -193,9 +185,9 @@ registerComponent('Select', (element, ctx) => {
         theme: {
             set: (value) => {
                 if (typeof value != 'string') return;
-                const { arrow, container, input, label, list, message } = element._components;
+                const { arrow, input, label, list, message } = element._components;
                 const theme = THEMES[value];
-                element.className = theme.element;
+                element.classList.add(...(theme.element.split(' ')));
                 input.className = theme.input;
                 arrow.className = theme.arrow;
                 label.className = theme.label;
@@ -215,7 +207,7 @@ registerComponent('Select', (element, ctx) => {
         value: {
             set: (value) => {
                 if (typeof value != 'string' && typeof value != 'number' && typeof value != 'boolean') return;
-                const { container, hidden, input } = element._components;
+                const { hidden, input } = element._components;
                 let itemFound = false;
                 for (const option of _options) {
                     if (option[_map.value] == value) {
@@ -225,8 +217,8 @@ registerComponent('Select', (element, ctx) => {
                             element.classList.add('is-dirty');
                         else
                             element.classList.remove('is-dirty');
-                        if (typeof (_onchange) === 'function')
-                            _onchange();
+                        // if (typeof (_onchange) === 'function')
+                        //     _onchange();
                         itemFound = true;
                         break;
                     }
@@ -238,7 +230,7 @@ registerComponent('Select', (element, ctx) => {
             },
             get: () => {
                 const hidden = element._components['hidden'];
-                let value = hidden.value;
+                const value = hidden.value;
                 if ((hidden.value === 'true') || (hidden.value === 'false'))
                     return hidden.value === 'true';
                 return value;
@@ -302,9 +294,9 @@ const getmdlSelect = {
         //show select if it has focus
         input.onfocus = function () {
             if (input.hasAttribute('disabled') || input.hasAttribute('readonly')) return;
-            menu['MaterialMenu'].show();
-            menu.focus();
-            opened = true;
+            // menu['MaterialMenu'].show();
+            // menu.focus();
+            // opened = true;
         };
         input.onblur = function (e) {
             e.stopPropagation();

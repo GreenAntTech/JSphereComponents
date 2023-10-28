@@ -28,7 +28,7 @@ registerComponent('Snackbar', (element) => {
             set: (value) => {
                 if (typeof value != 'string') return;
                 const theme = THEMES[value];
-                element.className = theme.element;
+                element.classList.add(...(theme.element.split(' ')));
             }
         }
     });
